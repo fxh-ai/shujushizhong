@@ -38,11 +38,9 @@ class RateLimit
         $batchId = $batch['id'];
         $rateLimit = $batch['rate_limit'] ?? 100; // 默认100次/分钟
         
-        // 获取当前时间窗口（分钟）
-        $timeWindow = date('Y-m-d H:i');
-        
-        // 构建缓存键
-        $cacheKey = 'rate_limit_' . $batchId . '_' . md5($timeWindow);
+        // 获取当前时间窗口（使用时间戳的分钟部分）
+        $timeMinute = floor(time() / 60);
+        $cacheKey = 'rate_limit_' . $batchId . '_' . $timeMinute;
         
         // 获取当前请求次数
         $currentCount = Cache::get($cacheKey) ?: 0;
