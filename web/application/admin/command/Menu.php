@@ -131,7 +131,7 @@ class Menu extends Command
         $output->info("Build Successed!");
     }
 
-    protected function getMenuArr($controller)
+    protected function importRule($controller)
     {
         $controller = str_replace('\\', '/', $controller);
         if (stripos($controller, '/') !== false) {
