@@ -16,11 +16,11 @@ class Batches extends Model
     protected $name = 'batches';
     
     // 自动写入时间戳字段
-    protected $autoWriteTimestamp = false;
+    protected $autoWriteTimestamp = true;
 
     // 定义时间戳字段名
-    protected $createTime = false;
-    protected $updateTime = false;
+    protected $createTime = 'created_at';
+    protected $updateTime = 'updated_at';
     protected $deleteTime = false;
 
     // 追加属性
