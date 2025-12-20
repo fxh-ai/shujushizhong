@@ -313,6 +313,10 @@ class Menu extends Command
             $comment = preg_replace(array('/^\/\*\*(.*)[\n\r\t]/u', '/[\s]+\*\//u', '/\*\s@(.*)/u', '/[\s|\*]+/u'), '', $comment);
 
             $title = $comment ? $comment : ucfirst($n->name);
+            // 确保标题是UTF-8编码
+            if (!mb_check_encoding($title, 'UTF-8')) {
+                $title = mb_convert_encoding($title, 'UTF-8', 'auto');
+            }
 
             //获取主键，作为AuthRule更新依据
             $id = $this->getAuthRulePK($name . "/" . strtolower($n->name));
