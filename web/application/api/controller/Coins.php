@@ -253,8 +253,9 @@ class Coins extends Api
             
             return $this->success('获取成功', $result);
         } catch (\Exception $e) {
-            \think\Log::error('获取行情数据失败: ' . $e->getMessage());
-            return $this->error('获取行情数据失败: ' . $e->getMessage());
+            $errorMsg = $e->getMessage() ?: '未知错误';
+            \think\Log::error('获取行情数据失败: ' . $errorMsg . ', Trace: ' . $e->getTraceAsString());
+            return $this->error('获取行情数据失败: ' . $errorMsg);
         }
     }
     
@@ -362,8 +363,9 @@ class Coins extends Api
             
             return $this->success('获取成功', $result);
         } catch (\Exception $e) {
-            \think\Log::error('获取K线数据失败: ' . $e->getMessage());
-            return $this->error('获取K线数据失败: ' . $e->getMessage());
+            $errorMsg = $e->getMessage() ?: '未知错误';
+            \think\Log::error('获取K线数据失败: ' . $errorMsg . ', Trace: ' . $e->getTraceAsString());
+            return $this->error('获取K线数据失败: ' . $errorMsg);
         }
     }
     
