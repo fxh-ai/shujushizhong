@@ -31,13 +31,23 @@ class CoinGecko
     
     /**
      * 构造函数
+     * 
+     * 注意：CoinGecko免费版不需要API密钥
+     * - 免费版限制：每分钟30次调用，每月10,000次调用
+     * - 付费版：每月129美元起，每分钟500次调用，每月500,000次调用
+     * - 如果需要更高限制，可以在系统配置中设置coingecko_api_key
      */
     public function __construct()
     {
-        // 从系统配置读取API密钥（如果有）
-        $this->apiKey = \think\Db::name('system_configs')
-            ->where('config_key', 'coingecko_api_key')
-            ->value('config_value') ?: '';
+        // 从系统配置读取API密钥（可选，免费版不需要）
+        try {
+            $this->apiKey = \think\Db::name('system_configs')
+                ->where('config_key', 'coingecko_api_key')
+                ->value('config_value') ?: '';
+        } catch (\Exception $e) {
+            // 如果读取失败，使用空字符串（免费版）
+            $this->apiKey = '';
+        }
     }
     
     /**
