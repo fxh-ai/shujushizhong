@@ -81,6 +81,7 @@ class RateLimit
         
         // 在响应头中添加限流信息
         $currentCount = $request->rateLimitCount ?? $currentCount;
+        $timeMinute = floor(time() / 60); // 重新计算，确保一致性
         $nextMinute = ($timeMinute + 1) * 60; // 下一分钟的时间戳
         
         $response->header([
