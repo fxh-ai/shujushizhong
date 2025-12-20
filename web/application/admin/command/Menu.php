@@ -13,6 +13,7 @@ use think\console\input\Option;
 use think\console\Output;
 use think\Exception;
 use think\Loader;
+use think\Db;
 
 class Menu extends Command
 {
@@ -32,6 +33,9 @@ class Menu extends Command
 
     protected function execute(Input $input, Output $output)
     {
+        // 确保数据库连接使用UTF-8编码
+        Db::execute("SET NAMES utf8mb4");
+        
         $this->model = new AuthRule();
         $adminPath = dirname(__DIR__) . DS;
         //控制器名
@@ -102,81 +106,32 @@ class Menu extends Command
                     $controllerArr = explode('/', $item);
                     end($controllerArr);
                     $key = key($controllerArr);
-                    $controllerArr[$key] = ucfirst($controllerArr[$key]);
+                    $controllerArr[$key] = Loader::parseName($controllerArr[$key]);
                 } else {
-                    $controllerArr = [ucfirst($item)];
+                    $controllerArr = [Loader::parseName($item)];
                 }
-                $adminPath = dirname(__DIR__) . DS . 'controller' . DS . implode(DS, $controllerArr) . '.php';
-                if (!is_file($adminPath)) {
-                    $output->error("controller not found");
-                    return;
-                }
-                $this->importRule($item);
+                $this->importRule(implode('/', $controllerArr));
             }
         } else {
-            $authRuleList = AuthRule::select();
-            //生成权限规则备份文件
-            file_put_contents(RUNTIME_PATH . 'authrule.json', json_encode(collection($authRuleList)->toArray()));
-
-            $this->model->where('id', '>', 0)->delete();
-            $controllerDir = $adminPath . 'controller' . DS;
-            // 扫描新的节点信息并导入
-            $treelist = $this->import($this->scandir($controllerDir));
+            $controllerPath = $adminPath . 'controller' . DS;
+            $files = new \RecursiveIteratorIterator(
+                new \RecursiveDirectoryIterator($controllerPath, \RecursiveDirectoryIterator::SKIP_DOTS),
+                \RecursiveIteratorIterator::SELF_FIRST
+            );
+            foreach ($files as $name => $file) {
+                if ($file->isFile() && $file->getExtension() == 'php') {
+                    $filePath = $file->getRealPath();
+                    $controllerName = str_replace([$controllerPath, '.php', DS], ['', '', '/'], $filePath);
+                    $controllerName = strtolower($controllerName);
+                    $this->importRule($controllerName);
+                }
+            }
         }
         Cache::rm("__menu__");
         $output->info("Build Successed!");
     }
 
-    /**
-     * 递归扫描文件夹
-     * @param string $dir
-     * @return array
-     */
-    public function scandir($dir)
-    {
-        $result = [];
-        $cdir = scandir($dir);
-        foreach ($cdir as $value) {
-            if (!in_array($value, array(".", ".."))) {
-                if (is_dir($dir . DS . $value)) {
-                    $result[$value] = $this->scandir($dir . DS . $value);
-                } else {
-                    $result[] = $value;
-                }
-            }
-        }
-        return $result;
-    }
-
-    /**
-     * 导入规则节点
-     * @param array $dirarr
-     * @param array $parentdir
-     * @return array
-     */
-    public function import($dirarr, $parentdir = [])
-    {
-        $menuarr = [];
-        foreach ($dirarr as $k => $v) {
-            if (is_array($v)) {
-                //当前是文件夹
-                $nowparentdir = array_merge($parentdir, [$k]);
-                $this->import($v, $nowparentdir);
-            } else {
-                //只匹配PHP文件
-                if (!preg_match('/^(\w+)\.php$/', $v, $matchone)) {
-                    continue;
-                }
-                //导入文件
-                $controller = ($parentdir ? implode('/', $parentdir) . '/' : '') . $matchone[1];
-                $this->importRule($controller);
-            }
-        }
-
-        return $menuarr;
-    }
-
-    protected function importRule($controller)
+    protected function getMenuArr($controller)
     {
         $controller = str_replace('\\', '/', $controller);
         if (stripos($controller, '/') !== false) {
@@ -251,9 +206,18 @@ class Menu extends Command
         }
         //过滤掉其它字符
         $controllerTitle = trim(preg_replace(array('/^\/\*\*(.*)[\n\r\t]/u', '/[\s]+\*\//u', '/\*\s@(.*)/u', '/[\s|\*]+/u'), '', $classComment));
+        
         // 确保标题是UTF-8编码
+        // 如果文件不是UTF-8，先检测并转换
         if (!mb_check_encoding($controllerTitle, 'UTF-8')) {
             $controllerTitle = mb_convert_encoding($controllerTitle, 'UTF-8', 'auto');
+        }
+        // 如果检测到可能是其他编码（如GBK），强制转换为UTF-8
+        if (mb_detect_encoding($controllerTitle, ['UTF-8', 'GBK', 'GB2312'], true) !== 'UTF-8') {
+            $detected = mb_detect_encoding($controllerTitle, ['GBK', 'GB2312', 'UTF-8'], true);
+            if ($detected && $detected !== 'UTF-8') {
+                $controllerTitle = mb_convert_encoding($controllerTitle, 'UTF-8', $detected);
+            }
         }
 
         //导入中文语言包
@@ -275,16 +239,17 @@ class Menu extends Command
             $icon = (!isset($controllerArr[$key]) ? $controllerIcon : 'fa fa-list');
             $remark = (!isset($controllerArr[$key]) ? $controllerRemark : '');
             $title = $title ? $title : $v;
+            
+            // 确保所有字符串都是UTF-8编码
+            $title = $this->ensureUtf8($title);
+            $remark = $this->ensureUtf8($remark);
+            
             $rulemodel = $this->model->get(['name' => $name]);
             if (!$rulemodel) {
-                // 确保所有字符串都是UTF-8编码
-                $title = mb_convert_encoding($title, 'UTF-8', 'auto');
-                $remark = mb_convert_encoding($remark, 'UTF-8', 'auto');
-                $this->model
-                    ->data(['pid' => $pid, 'name' => $name, 'title' => $title, 'icon' => $icon, 'remark' => $remark, 'ismenu' => 1, 'status' => 'normal'])
-                    ->isUpdate(false)
-                    ->save();
-                $pid = $this->model->id;
+                // 使用原生SQL插入，确保UTF-8编码
+                $sql = "INSERT INTO " . $this->model->getTable() . " (pid, name, title, icon, remark, ismenu, status) VALUES (?, ?, ?, ?, ?, ?, ?)";
+                Db::execute($sql, [$pid, $name, $title, $icon, $remark, 1, 'normal']);
+                $pid = Db::getLastInsID();
             } else {
                 $pid = $rulemodel->id;
             }
@@ -313,17 +278,67 @@ class Menu extends Command
             $comment = preg_replace(array('/^\/\*\*(.*)[\n\r\t]/u', '/[\s]+\*\//u', '/\*\s@(.*)/u', '/[\s|\*]+/u'), '', $comment);
 
             $title = $comment ? $comment : ucfirst($n->name);
+            
             // 确保标题是UTF-8编码
-            if (!mb_check_encoding($title, 'UTF-8')) {
-                $title = mb_convert_encoding($title, 'UTF-8', 'auto');
-            }
+            $title = $this->ensureUtf8($title);
 
             //获取主键，作为AuthRule更新依据
             $id = $this->getAuthRulePK($name . "/" . strtolower($n->name));
 
             $ruleArr[] = array('id' => $id, 'pid' => $pid, 'name' => $name . "/" . strtolower($n->name), 'icon' => 'fa fa-circle-o', 'title' => $title, 'ismenu' => 0, 'status' => 'normal');
         }
-        $this->model->isUpdate(false)->saveAll($ruleArr);
+        
+        // 批量插入时也确保UTF-8编码
+        foreach ($ruleArr as &$rule) {
+            $rule['title'] = $this->ensureUtf8($rule['title']);
+        }
+        unset($rule);
+        
+        if (!empty($ruleArr)) {
+            // 使用批量插入，确保UTF-8编码
+            $table = $this->model->getTable();
+            foreach ($ruleArr as $rule) {
+                $sql = "INSERT INTO {$table} (id, pid, name, icon, title, ismenu, status) VALUES (?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE title = VALUES(title)";
+                Db::execute($sql, [
+                    $rule['id'] ?: null,
+                    $rule['pid'],
+                    $rule['name'],
+                    $rule['icon'],
+                    $rule['title'],
+                    $rule['ismenu'],
+                    $rule['status']
+                ]);
+            }
+        }
+    }
+
+    /**
+     * 确保字符串是UTF-8编码
+     * 
+     * @param string $str
+     * @return string
+     */
+    protected function ensureUtf8($str)
+    {
+        if (empty($str)) {
+            return $str;
+        }
+        
+        // 如果已经是UTF-8，直接返回
+        if (mb_check_encoding($str, 'UTF-8')) {
+            return $str;
+        }
+        
+        // 检测编码并转换
+        $detected = mb_detect_encoding($str, ['UTF-8', 'GBK', 'GB2312', 'ISO-8859-1'], true);
+        if ($detected && $detected !== 'UTF-8') {
+            $str = mb_convert_encoding($str, 'UTF-8', $detected);
+        } else {
+            // 如果检测失败，尝试强制转换
+            $str = mb_convert_encoding($str, 'UTF-8', 'auto');
+        }
+        
+        return $str;
     }
 
     //获取主键
