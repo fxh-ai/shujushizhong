@@ -53,6 +53,12 @@ class Api
     protected $noNeedRight = [];
 
     /**
+     * 无需批次密钥验证的方法（用于健康检查等特殊接口）
+     * @var array
+     */
+    protected $noNeedApiKey = [];
+
+    /**
      * 权限Auth
      * @var Auth
      */
@@ -101,6 +107,9 @@ class Api
         //移除HTML标签
         $this->request->filter('trim,strip_tags,htmlspecialchars');
 
+        // 批次密钥鉴权（项目特定功能）
+        $this->checkApiKey();
+
         $this->auth = Auth::instance();
 
         $modulename = $this->request->module();
@@ -144,6 +153,57 @@ class Api
 
         // 加载当前控制器语言包
         $this->loadlang($controllername);
+    }
+
+    /**
+     * 检查批次密钥（api_key）
+     * 如果控制器设置了 $noNeedApiKey，则跳过验证
+     */
+    protected function checkApiKey()
+    {
+        $actionname = strtolower($this->request->action());
+        
+        // 检查是否需要跳过api_key验证
+        $noNeedApiKey = $this->noNeedApiKey;
+        if (in_array('*', $noNeedApiKey) || in_array($actionname, $noNeedApiKey)) {
+            // 如果提供了api_key，仍然验证并注入批次信息（可选）
+            $apiKey = $this->request->param('api_key', '');
+            if (!empty($apiKey)) {
+                $this->validateApiKey($apiKey);
+            }
+            return;
+        }
+        
+        // 必须验证api_key
+        $apiKey = $this->request->param('api_key', '');
+        if (empty($apiKey)) {
+            $this->error('Missing required parameter: api_key', null, 400);
+        }
+        
+        $this->validateApiKey($apiKey);
+    }
+
+    /**
+     * 验证api_key并注入批次信息
+     * @param string $apiKey
+     */
+    protected function validateApiKey($apiKey)
+    {
+        $batch = \think\Db::name('batches')
+            ->where('api_key', $apiKey)
+            ->find();
+        
+        if (!$batch) {
+            $this->error('Invalid api_key', null, 401);
+        }
+        
+        if ($batch['status'] != 1) {
+            $this->error('Batch is disabled', null, 403);
+        }
+        
+        // 将批次信息注入到请求中
+        $this->request->batch = $batch;
+        $this->request->batchId = $batch['id'];
     }
 
     /**
