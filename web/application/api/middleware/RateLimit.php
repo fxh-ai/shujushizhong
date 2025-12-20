@@ -68,6 +68,10 @@ class RateLimit
         $currentCount++;
         Cache::set($cacheKey, $currentCount, 120); // 缓存2分钟，确保跨分钟边界也能正确计数
         
+        // 将当前计数注入到请求中，供响应头使用
+        $request->rateLimitCount = $currentCount;
+        $request->rateLimitMax = $rateLimit;
+        
         // 记录请求日志（可选，避免日志过多）
         // 只在接近限制时记录
         if ($currentCount >= $rateLimit * 0.8) {
@@ -78,10 +82,13 @@ class RateLimit
         $response = $next($request);
         
         // 在响应头中添加限流信息
+        $currentCount = $request->rateLimitCount ?? $currentCount;
+        $nextMinute = ($timeMinute + 1) * 60; // 下一分钟的时间戳
+        
         $response->header([
             'X-RateLimit-Limit' => $rateLimit,
             'X-RateLimit-Remaining' => max(0, $rateLimit - $currentCount),
-            'X-RateLimit-Reset' => strtotime($timeWindow . ':59') + 1, // 下一分钟的开始时间
+            'X-RateLimit-Reset' => $nextMinute, // 下一分钟的时间戳
         ]);
         
         return $response;
