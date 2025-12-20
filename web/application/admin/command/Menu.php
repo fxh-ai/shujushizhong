@@ -251,6 +251,10 @@ class Menu extends Command
         }
         //过滤掉其它字符
         $controllerTitle = trim(preg_replace(array('/^\/\*\*(.*)[\n\r\t]/u', '/[\s]+\*\//u', '/\*\s@(.*)/u', '/[\s|\*]+/u'), '', $classComment));
+        // 确保标题是UTF-8编码
+        if (!mb_check_encoding($controllerTitle, 'UTF-8')) {
+            $controllerTitle = mb_convert_encoding($controllerTitle, 'UTF-8', 'auto');
+        }
 
         //导入中文语言包
         \think\Lang::load(dirname(__DIR__) . DS . 'lang/zh-cn.php');
@@ -273,6 +277,9 @@ class Menu extends Command
             $title = $title ? $title : $v;
             $rulemodel = $this->model->get(['name' => $name]);
             if (!$rulemodel) {
+                // 确保所有字符串都是UTF-8编码
+                $title = mb_convert_encoding($title, 'UTF-8', 'auto');
+                $remark = mb_convert_encoding($remark, 'UTF-8', 'auto');
                 $this->model
                     ->data(['pid' => $pid, 'name' => $name, 'title' => $title, 'icon' => $icon, 'remark' => $remark, 'ismenu' => 1, 'status' => 'normal'])
                     ->isUpdate(false)
