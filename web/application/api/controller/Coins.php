@@ -198,6 +198,14 @@ class Coins extends Api
         $host = $this->request->host();
         $port = $this->request->port();
         
+        // 处理host中可能包含的端口号
+        if (strpos($host, ':') !== false) {
+            list($host, $existingPort) = explode(':', $host, 2);
+            if (empty($port)) {
+                $port = $existingPort;
+            }
+        }
+        
         $baseUrl = $scheme . '://' . $host;
         if ($port && $port != 80 && $port != 443) {
             $baseUrl .= ':' . $port;

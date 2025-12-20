@@ -287,7 +287,7 @@ class CoinGecko
         }
         
         // 本地存储路径
-        $uploadPath = ROOT_PATH . 'public' . DS . 'uploads' . DS . 'coins' . DS;
+        $uploadPath = dirname(dirname(dirname(__DIR__))) . DS . 'public' . DS . 'uploads' . DS . 'coins' . DS;
         if (!is_dir($uploadPath)) {
             mkdir($uploadPath, 0755, true);
         }
