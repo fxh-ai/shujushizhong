@@ -1,13 +1,13 @@
 <?php
 
 return [
-    'Coin_id'          => 'CoinGeckoçš„å¸ç§ID',
-    'Name'             => 'å¸ç§åç§°ï¼ˆæ”¯æŒè‡ªå®šä¹‰ï¼‰',
-    'Custom_name'      => 'è‡ªå®šä¹‰åç§°ï¼ˆå¦‚æžœè®¾ç½®ï¼Œä¼˜å…ˆä½¿ç”¨ï¼‰',
-    'Description'      => 'å¸ç§æè¿°ï¼ˆæ”¯æŒè‡ªå®šä¹‰ï¼‰',
-    'Icon_url'         => 'CoinGeckoçš„åŽŸå§‹Logo URL',
-    'Logo_path'        => 'æœ¬åœ°å­˜å‚¨çš„Logoè·¯å¾„ï¼ˆ/uploads/coins/{coin_id}.pngï¼‰',
-    'Custom_logo_path' => 'è‡ªå®šä¹‰Logoè·¯å¾„ï¼ˆå¦‚æžœè®¾ç½®ï¼Œä¼˜å…ˆä½¿ç”¨ï¼‰',
-    'Status'           => '1:å¯ç”¨ 0:ç¦ç”¨',
-    'Sort_order'       => 'æŽ’åºé¡ºåº'
+    'Coin_id'          => 'CoinGecko的币种ID',
+    'Name'             => '币种名称（支持自定义）',
+    'Custom_name'      => '自定义名称（如果设置，优先使用）',
+    'Description'      => '币种描述（支持自定义）',
+    'Icon_url'         => 'CoinGecko的原始Logo URL',
+    'Logo_path'        => '本地存储的Logo路径（/uploads/coins/{coin_id}.png）',
+    'Custom_logo_path' => '自定义Logo路径（如果设置，优先使用）',
+    'Status'           => '1:启用 0:禁用',
+    'Sort_order'       => '排序顺序'
 ];

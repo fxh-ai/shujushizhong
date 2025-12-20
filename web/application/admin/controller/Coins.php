@@ -5,7 +5,7 @@ namespace app\admin\controller;
 use app\common\controller\Backend;
 
 /**
- * å¸ç§è¡¨
+ * 币种表
  *
  * @icon fa fa-circle-o
  */
