@@ -246,10 +246,17 @@ class Menu extends Command
             
             $rulemodel = $this->model->get(['name' => $name]);
             if (!$rulemodel) {
-                // 使用原生SQL插入，确保UTF-8编码
-                $sql = "INSERT INTO " . $this->model->getTable() . " (pid, name, title, icon, remark, ismenu, status) VALUES (?, ?, ?, ?, ?, ?, ?)";
-                Db::execute($sql, [$pid, $name, $title, $icon, $remark, 1, 'normal']);
-                $pid = Db::getLastInsID();
+                // 使用模型保存，但确保UTF-8编码
+                $this->model->data([
+                    'pid' => $pid,
+                    'name' => $name,
+                    'title' => $title,
+                    'icon' => $icon,
+                    'remark' => $remark,
+                    'ismenu' => 1,
+                    'status' => 'normal'
+                ])->isUpdate(false)->save();
+                $pid = $this->model->id;
             } else {
                 $pid = $rulemodel->id;
             }
@@ -295,20 +302,8 @@ class Menu extends Command
         unset($rule);
         
         if (!empty($ruleArr)) {
-            // 使用批量插入，确保UTF-8编码
-            $table = $this->model->getTable();
-            foreach ($ruleArr as $rule) {
-                $sql = "INSERT INTO {$table} (id, pid, name, icon, title, ismenu, status) VALUES (?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE title = VALUES(title)";
-                Db::execute($sql, [
-                    $rule['id'] ?: null,
-                    $rule['pid'],
-                    $rule['name'],
-                    $rule['icon'],
-                    $rule['title'],
-                    $rule['ismenu'],
-                    $rule['status']
-                ]);
-            }
+            // 使用模型的saveAll方法，但确保UTF-8编码
+            $this->model->isUpdate(false)->saveAll($ruleArr);
         }
     }
 
