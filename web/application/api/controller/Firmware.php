@@ -114,13 +114,10 @@ class Firmware extends Api
             foreach ($firmwares as $firmware) {
                 $result[] = [
                     'version' => $firmware['version'],
-                    'version_code' => $firmware['version_code'] ?? 0,
-                    'download_url' => $this->getFullUrl($firmware['download_url']),
+                    'download_url' => $this->getFullUrl($firmware['download_url'] ?: $firmware['file_path']),
                     'file_size' => $firmware['file_size'] ?? 0,
-                    'md5' => $firmware['md5'] ?? '',
                     'release_notes' => $firmware['release_notes'] ?? '',
-                    'release_date' => $firmware['release_date'] ?? '',
-                    'is_required' => $firmware['is_required'] ?? 0,
+                    'force_update' => $firmware['force_update'] ?? 0,
                 ];
             }
             
