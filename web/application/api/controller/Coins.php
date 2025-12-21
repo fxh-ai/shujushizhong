@@ -202,10 +202,20 @@ class Coins extends Api
             }
             
             // 构建行情数据
+            // CoinGecko simple/price返回格式：
+            // {
+            //   "bitcoin": {
+            //     "usd": 88000,
+            //     "usd_market_cap": 1750000000000,
+            //     "usd_24h_vol": 30000000000,
+            //     "usd_24h_change": -0.5,
+            //     "last_updated_at": 1234567890
+            //   }
+            // }
             $quote = [
                 $currency => $price[$currency] ?? 0,
                 $currency . '_24h_change' => $price[$currency . '_24h_change'] ?? 0,
-                $currency . '_24h_change_percentage' => $price[$currency . '_24h_change_percent'] ?? 0,
+                $currency . '_24h_change_percentage' => $price[$currency . '_24h_change'] ?? 0, // 注意：CoinGecko返回的是百分比数值，不是百分比字符串
                 $currency . '_market_cap' => $price[$currency . '_market_cap'] ?? 0,
                 $currency . '_24h_vol' => $price[$currency . '_24h_vol'] ?? 0,
                 'last_updated_at' => $price['last_updated_at'] ?? time(),
