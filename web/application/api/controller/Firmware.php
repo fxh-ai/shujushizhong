@@ -49,22 +49,19 @@ class Firmware extends Api
                 return $this->error('暂无可用固件版本');
             }
             
-            // 构建响应数据
+            // 构建响应数据（根据PRD文档格式）
             $result = [
-                'version' => $firmware['version'],
-                'version_code' => $firmware['version_code'] ?? 0,
-                'download_url' => $this->getFullUrl($firmware['download_url']),
+                'latest_version' => $firmware['version'],
+                'download_url' => $this->getFullUrl($firmware['download_url'] ?: $firmware['file_path']),
                 'file_size' => $firmware['file_size'] ?? 0,
-                'md5' => $firmware['md5'] ?? '',
                 'release_notes' => $firmware['release_notes'] ?? '',
-                'release_date' => $firmware['release_date'] ?? '',
-                'is_required' => $firmware['is_required'] ?? 0,
+                'force_update' => $firmware['force_update'] ?? 0,
             ];
             
             // 如果提供了当前版本，进行比较
             if (!empty($currentVersion)) {
-                $result['needs_update'] = $this->compareVersion($currentVersion, $firmware['version']);
                 $result['current_version'] = $currentVersion;
+                $result['need_update'] = $this->compareVersion($currentVersion, $firmware['version']);
             }
             
             // 缓存30分钟
@@ -145,7 +142,7 @@ class Firmware extends Api
         $latestVersion = ltrim($latestVersion, 'vV');
         
         // 使用version_compare函数比较版本号
-        // 返回1表示latestVersion > currentVersion，需要更新
+        // 返回true表示latestVersion > currentVersion，需要更新
         return version_compare($latestVersion, $currentVersion, '>');
     }
     
@@ -187,4 +184,3 @@ class Firmware extends Api
         return $baseUrl . $path;
     }
 }
-
