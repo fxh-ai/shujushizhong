@@ -1,9 +1,7 @@
 <?php
 // API模块公共文件
 
-// 定义全局中间件
-// 注意：中间件执行顺序很重要
-// 1. Auth中间件：验证api_key并注入批次信息
-// 2. RateLimit中间件：基于批次信息进行限流
-\think\Middleware::add('app\api\middleware\Auth');
-\think\Middleware::add('app\api\middleware\RateLimit');
+// 注意：ThinkPHP 5.0 不支持全局中间件注册
+// 中间件逻辑已在 Api 基类的 _initialize() 方法中实现
+// 通过 checkApiKey() 方法进行鉴权
+// RateLimit 中间件暂时不使用，限流逻辑可以在需要时添加到控制器中
