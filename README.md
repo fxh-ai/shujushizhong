@@ -65,17 +65,26 @@ php -S localhost:8000 -t public
 - [ ] 鉴权机制实现
 - [ ] API接口开发
 
+## 📚 文档
+
+- **[部署文档](./DEPLOYMENT.md)** - 系统部署指南
+- **[API接口文档（客户版）](./API_USER_GUIDE.md)** - 设备厂家和开发者使用文档
+- **[API接口文档（技术版）](./API_DOCUMENTATION.md)** - 完整技术文档
+- **[产品需求文档](./dev-docs/PRD文档.md)** - PRD文档
+- **[编码规范](./dev-docs/编码规范.md)** - 编码规范和最佳实践
+
 ## API接口列表
 
 1. **健康检查接口**：`GET /api/health`
 2. **币种列表接口**：`GET /api/coins/list`
-3. **行情数据接口**：`GET /api/coins/{coin_id}/quote`
-4. **K线图接口**：`GET /api/coins/{coin_id}/ohlc`
-5. **Logo接口**：`GET /api/coins/{coin_id}/logo`
-6. **固件版本接口**：`GET /api/firmware/version`
-7. **配置信息接口**：`GET /api/config`
+3. **行情数据接口**：`GET /api/coins/quote`
+4. **K线图接口**：`GET /api/coins/ohlc`
+5. **固件版本接口**：`GET /api/firmware/version`
+6. **配置信息接口**：`GET /api/config`
 
-详细API文档请参考：`dev-docs/PRD文档.md`
+详细API文档请参考：
+- 客户使用文档：[API_USER_GUIDE.md](./API_USER_GUIDE.md)
+- 技术文档：[API_DOCUMENTATION.md](./API_DOCUMENTATION.md)
 
 ## 开发状态
 
