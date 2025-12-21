@@ -109,6 +109,9 @@ class Api
 
         // 批次密钥鉴权（项目特定功能）
         $this->checkApiKey();
+        
+        // API限流检查（项目特定功能）
+        $this->checkRateLimit();
 
         $this->auth = Auth::instance();
 
