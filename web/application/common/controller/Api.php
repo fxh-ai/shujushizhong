@@ -208,6 +208,64 @@ class Api
         $this->request->batch = $batch;
         $this->request->batchId = $batch['id'];
     }
+    
+    /**
+     * 检查API限流
+     * 基于批次的限流机制
+     */
+    protected function checkRateLimit()
+    {
+        // 获取批次信息（应该在checkApiKey之后）
+        $batch = $this->request->batch ?? null;
+        
+        if (!$batch) {
+            // 如果没有批次信息，跳过限流检查（可能是健康检查等不需要限流的接口）
+            return;
+        }
+        
+        $batchId = $batch['id'];
+        $rateLimit = $batch['rate_limit'] ?? 100; // 默认100次/分钟
+        
+        // 获取当前时间窗口（使用时间戳的分钟部分）
+        $timeMinute = floor(time() / 60);
+        $cacheKey = 'rate_limit_' . $batchId . '_' . $timeMinute;
+        
+        // 获取当前请求次数
+        $currentCount = \think\Cache::get($cacheKey) ?: 0;
+        
+        // 检查是否超过限制
+        if ($currentCount >= $rateLimit) {
+            // 记录限流日志
+            try {
+                \think\Db::name('rate_limit_logs')->insert([
+                    'batch_id' => $batchId,
+                    'api_path' => $this->request->pathinfo(),
+                    'ip' => $this->request->ip(),
+                    'rate_limit' => $rateLimit,
+                    'request_count' => $rateLimit + 1, // 超过限制的请求
+                    'status' => 'blocked',
+                    'created_at' => date('Y-m-d H:i:s'),
+                ]);
+            } catch (\Exception $e) {
+                // 忽略日志记录错误
+            }
+            
+            // 返回429错误
+            $nextMinuteReset = ($timeMinute + 1) * 60; // 下一分钟开始的时间戳
+            $this->error(
+                'Rate limit exceeded. Maximum ' . $rateLimit . ' requests per minute.',
+                [
+                    'rate_limit' => $rateLimit,
+                    'retry_after' => $nextMinuteReset - time(),
+                ],
+                429
+            );
+        }
+        
+        // 增加请求计数
+        $currentCount++;
+        \think\Cache::set($cacheKey, $currentCount, 120); // 缓存2分钟，确保跨分钟边界也能正确计数
+    }
 
     /**
      * 加载语言文件
