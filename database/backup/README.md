@@ -6,6 +6,8 @@
 
 ## 导出命令
 
+### 标准导出（MySQL/MariaDB通用）
+
 ```bash
 # 使用Docker MySQL容器导出
 docker exec mysql_dev mysqldump -uroot -proot123456 \
@@ -15,6 +17,25 @@ docker exec mysql_dev mysqldump -uroot -proot123456 \
   --triggers \
   fastadmin > database/backup/fastadmin_$(date +%Y%m%d_%H%M%S).sql
 ```
+
+### MariaDB 10.5.27 兼容导出（推荐用于生产环境）
+
+```bash
+# 使用Docker MySQL容器导出（包含数据库创建语句，兼容MariaDB 10.5.27）
+docker exec mysql_dev mysqldump -uroot -proot123456 \
+  --default-character-set=utf8mb4 \
+  --single-transaction \
+  --routines \
+  --triggers \
+  --events \
+  --add-drop-database \
+  --databases fastadmin > database/backup/fastadmin_mariadb_$(date +%Y%m%d_%H%M%S).sql
+```
+
+**MariaDB 兼容导出参数说明**：
+- `--events`：包含事件调度器
+- `--add-drop-database`：包含 `DROP DATABASE IF EXISTS` 和 `CREATE DATABASE` 语句
+- `--databases`：导出数据库创建语句，便于在新服务器直接导入
 
 ## 导入命令
 
@@ -48,11 +69,18 @@ mysql -uroot -p fastadmin < database/backup/fastadmin_YYYYMMDD_HHMMSS.sql
 ## 备份内容
 
 备份包含：
+- ✅ 数据库创建语句（CREATE DATABASE，仅MariaDB兼容版本）
 - ✅ 所有表结构（CREATE TABLE）
 - ✅ 所有表数据（INSERT INTO）
 - ✅ 存储过程和函数（--routines）
 - ✅ 触发器（--triggers）
+- ✅ 事件调度器（--events，仅MariaDB兼容版本）
 - ✅ 字符集信息（utf8mb4）
+
+## 备份文件说明
+
+- `fastadmin_YYYYMMDD_HHMMSS.sql`：标准备份文件（不包含数据库创建语句）
+- `fastadmin_mariadb_YYYYMMDD_HHMMSS.sql`：MariaDB 10.5.27 兼容备份文件（包含数据库创建语句，推荐用于生产环境迁移）
 
 ## 验证备份
 
@@ -122,4 +150,17 @@ A: 在mysqldump命令后添加表名：
 ```bash
 mysqldump ... fastadmin table1 table2 > backup.sql
 ```
+
+### Q: 如何导入到 MariaDB 10.5.27？
+A: 使用 MariaDB 兼容版本的备份文件：
+```bash
+# 1. 如果备份文件包含 CREATE DATABASE 语句，直接导入即可
+mysql -u root -p < fastadmin_mariadb_YYYYMMDD_HHMMSS.sql
+
+# 2. 如果备份文件不包含 CREATE DATABASE 语句，需要先创建数据库
+mysql -u root -p -e "CREATE DATABASE IF NOT EXISTS fastadmin CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;"
+mysql -u root -p fastadmin < fastadmin_YYYYMMDD_HHMMSS.sql
+```
+
+**注意**：MariaDB 10.5.27 完全兼容标准的 MySQL dump 文件，可以直接导入使用。
 
