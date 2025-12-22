@@ -1,4 +1,3 @@
-mysqldump: [Warning] Using a password on the command line interface can be insecure.
 -- MySQL dump 10.13  Distrib 8.0.44, for Linux (aarch64)
 --
 -- Host: localhost    Database: fastadmin
@@ -22,7 +21,7 @@ mysqldump: [Warning] Using a password on the command line interface can be insec
 
 /*!40000 DROP DATABASE IF EXISTS `fastadmin`*/;
 
-CREATE DATABASE /*!32312 IF NOT EXISTS*/ `fastadmin` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+CREATE DATABASE /*!32312 IF NOT EXISTS*/ `fastadmin` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci */ ;
 
 USE `fastadmin`;
 
@@ -285,7 +284,7 @@ CREATE TABLE `fa_batches` (
   `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_api_key` (`api_key`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='æ‰¹æ¬¡è¡¨';
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='æ‰¹æ¬¡è¡¨';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -353,7 +352,7 @@ CREATE TABLE `fa_coin_ohlc_cache` (
   PRIMARY KEY (`id`),
   KEY `idx_coin_ohlc_cache_lookup` (`coin_id`,`vs_currency`,`days`),
   KEY `idx_coin_ohlc_cache_cached_at` (`cached_at`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='Kçº¿æ•°æ®ç¼“å­˜è¡¨';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Kçº¿æ•°æ®ç¼“å­˜è¡¨';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -385,7 +384,7 @@ CREATE TABLE `fa_coin_quotes` (
   PRIMARY KEY (`id`),
   KEY `idx_coin_quotes_coin_id` (`coin_id`),
   KEY `idx_coin_quotes_cached_at` (`cached_at`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='è¡Œæƒ…æ•°æ®ç¼“å­˜è¡¨';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='è¡Œæƒ…æ•°æ®ç¼“å­˜è¡¨';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -421,7 +420,7 @@ CREATE TABLE `fa_coins` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_coin_id` (`coin_id`),
   KEY `idx_status` (`status`)
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='å¸ç§è¡¨';
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='å¸ç§è¡¨';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -516,7 +515,7 @@ CREATE TABLE `fa_firmware_versions` (
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_version` (`version`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='å›ºä»¶ç‰ˆæœ¬è¡¨';
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='å›ºä»¶ç‰ˆæœ¬è¡¨';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -546,7 +545,7 @@ CREATE TABLE `fa_rate_limit_logs` (
   PRIMARY KEY (`id`),
   KEY `idx_batch_minute` (`batch_id`,`minute`),
   KEY `idx_created_at` (`created_at`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='APIé™æµæ—¥å¿—è¡¨';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='APIé™æµæ—¥å¿—è¡¨';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -602,7 +601,7 @@ CREATE TABLE `fa_system_configs` (
   `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_config_key` (`config_key`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='ç³»ç»Ÿé…ç½®è¡¨';
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='ç³»ç»Ÿé…ç½®è¡¨';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
