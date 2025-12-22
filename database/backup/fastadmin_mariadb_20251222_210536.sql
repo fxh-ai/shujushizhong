@@ -1,13 +1,13 @@
--- MySQL dump 10.13  Distrib 8.0.44, for Linux (aarch64)
+-- MariaDB dump 10.5.27 compatible, for Linux
 --
 -- Host: localhost    Database: fastadmin
 -- ------------------------------------------------------
--- Server version	8.0.44
+-- Server version	10.5.27-MariaDB
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!50503 SET NAMES utf8mb4 */;
+/*!40100 SET NAMES utf8mb4 */;
 /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
 /*!40103 SET TIME_ZONE='+00:00' */;
 /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
@@ -21,7 +21,7 @@
 
 /*!40000 DROP DATABASE IF EXISTS `fastadmin`*/;
 
-CREATE DATABASE /*!32312 IF NOT EXISTS*/ `fastadmin` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci */ ;
+CREATE DATABASE /*!32312 IF NOT EXISTS*/ `fastadmin` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci */ ;
 
 USE `fastadmin`;
 
@@ -31,7 +31,7 @@ USE `fastadmin`;
 
 DROP TABLE IF EXISTS `fa_admin`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!40100 SET character_set_client = utf8mb4 */;
 CREATE TABLE `fa_admin` (
   `id` int unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `username` varchar(20) COLLATE utf8mb4_general_ci DEFAULT '' COMMENT '用户名',
@@ -69,7 +69,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `fa_admin_log`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!40100 SET character_set_client = utf8mb4 */;
 CREATE TABLE `fa_admin_log` (
   `id` int unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `admin_id` int unsigned NOT NULL DEFAULT '0' COMMENT '管理员ID',
@@ -101,7 +101,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `fa_area`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!40100 SET character_set_client = utf8mb4 */;
 CREATE TABLE `fa_area` (
   `id` int NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `pid` int DEFAULT NULL COMMENT '父id',
@@ -135,7 +135,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `fa_attachment`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!40100 SET character_set_client = utf8mb4 */;
 CREATE TABLE `fa_attachment` (
   `id` int unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `category` varchar(50) COLLATE utf8mb4_general_ci DEFAULT '' COMMENT '类别',
@@ -175,7 +175,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `fa_auth_group`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!40100 SET character_set_client = utf8mb4 */;
 CREATE TABLE `fa_auth_group` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
   `pid` int unsigned NOT NULL DEFAULT '0' COMMENT '父组别',
@@ -204,7 +204,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `fa_auth_group_access`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!40100 SET character_set_client = utf8mb4 */;
 CREATE TABLE `fa_auth_group_access` (
   `uid` int unsigned NOT NULL COMMENT '会员ID',
   `group_id` int unsigned NOT NULL COMMENT '级别ID',
@@ -230,7 +230,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `fa_auth_rule`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!40100 SET character_set_client = utf8mb4 */;
 CREATE TABLE `fa_auth_rule` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
   `type` enum('menu','file') COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'file' COMMENT 'menu为菜单,file为权限节点',
@@ -273,7 +273,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `fa_batches`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!40100 SET character_set_client = utf8mb4 */;
 CREATE TABLE `fa_batches` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL COMMENT 'æ‰¹æ¬¡åç§°',
@@ -303,7 +303,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `fa_category`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!40100 SET character_set_client = utf8mb4 */;
 CREATE TABLE `fa_category` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
   `pid` int unsigned NOT NULL DEFAULT '0' COMMENT '父ID',
@@ -341,7 +341,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `fa_coin_ohlc_cache`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!40100 SET character_set_client = utf8mb4 */;
 CREATE TABLE `fa_coin_ohlc_cache` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
   `coin_id` varchar(50) NOT NULL,
@@ -370,7 +370,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `fa_coin_quotes`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!40100 SET character_set_client = utf8mb4 */;
 CREATE TABLE `fa_coin_quotes` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
   `coin_id` varchar(50) NOT NULL,
@@ -402,7 +402,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `fa_coins`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!40100 SET character_set_client = utf8mb4 */;
 CREATE TABLE `fa_coins` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
   `coin_id` varchar(50) NOT NULL COMMENT 'CoinGeckoçš„å¸ç§ID',
@@ -439,7 +439,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `fa_config`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!40100 SET character_set_client = utf8mb4 */;
 CREATE TABLE `fa_config` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(30) COLLATE utf8mb4_general_ci DEFAULT '' COMMENT '变量名',
@@ -474,7 +474,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `fa_ems`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!40100 SET character_set_client = utf8mb4 */;
 CREATE TABLE `fa_ems` (
   `id` int unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `event` varchar(30) COLLATE utf8mb4_general_ci DEFAULT '' COMMENT '事件',
@@ -502,7 +502,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `fa_firmware_versions`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!40100 SET character_set_client = utf8mb4 */;
 CREATE TABLE `fa_firmware_versions` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
   `version` varchar(20) NOT NULL COMMENT 'è¯­ä¹‰åŒ–ç‰ˆæœ¬å·ï¼Œå¦‚ï¼š1.0.0',
@@ -534,7 +534,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `fa_rate_limit_logs`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!40100 SET character_set_client = utf8mb4 */;
 CREATE TABLE `fa_rate_limit_logs` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
   `batch_id` int unsigned NOT NULL,
@@ -563,7 +563,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `fa_sms`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!40100 SET character_set_client = utf8mb4 */;
 CREATE TABLE `fa_sms` (
   `id` int unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `event` varchar(30) COLLATE utf8mb4_general_ci DEFAULT '' COMMENT '事件',
@@ -591,7 +591,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `fa_system_configs`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!40100 SET character_set_client = utf8mb4 */;
 CREATE TABLE `fa_system_configs` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
   `config_key` varchar(50) NOT NULL,
@@ -620,7 +620,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `fa_test`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!40100 SET character_set_client = utf8mb4 */;
 CREATE TABLE `fa_test` (
   `id` int unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `user_id` int DEFAULT '0' COMMENT '会员ID',
@@ -678,7 +678,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `fa_user`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!40100 SET character_set_client = utf8mb4 */;
 CREATE TABLE `fa_user` (
   `id` int unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `group_id` int unsigned NOT NULL DEFAULT '0' COMMENT '组别ID',
@@ -732,7 +732,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `fa_user_group`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!40100 SET character_set_client = utf8mb4 */;
 CREATE TABLE `fa_user_group` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(50) COLLATE utf8mb4_general_ci DEFAULT '' COMMENT '组名',
@@ -760,7 +760,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `fa_user_money_log`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!40100 SET character_set_client = utf8mb4 */;
 CREATE TABLE `fa_user_money_log` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
   `user_id` int unsigned NOT NULL DEFAULT '0' COMMENT '会员ID',
@@ -788,7 +788,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `fa_user_rule`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!40100 SET character_set_client = utf8mb4 */;
 CREATE TABLE `fa_user_rule` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
   `pid` int DEFAULT NULL COMMENT '父ID',
@@ -820,7 +820,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `fa_user_score_log`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!40100 SET character_set_client = utf8mb4 */;
 CREATE TABLE `fa_user_score_log` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
   `user_id` int unsigned NOT NULL DEFAULT '0' COMMENT '会员ID',
@@ -848,7 +848,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `fa_user_token`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!40100 SET character_set_client = utf8mb4 */;
 CREATE TABLE `fa_user_token` (
   `token` varchar(50) COLLATE utf8mb4_general_ci NOT NULL COMMENT 'Token',
   `user_id` int unsigned NOT NULL DEFAULT '0' COMMENT '会员ID',
@@ -873,7 +873,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `fa_version`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!40100 SET character_set_client = utf8mb4 */;
 CREATE TABLE `fa_version` (
   `id` int NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `oldversion` varchar(30) COLLATE utf8mb4_general_ci DEFAULT '' COMMENT '旧版本号',
